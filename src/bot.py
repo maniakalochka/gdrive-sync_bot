@@ -9,3 +9,4 @@ bot = telebot.TeleBot(BOT_TOKEN)
 #--------ADMIN_SECTION-------#
 
 ADMIN_TG_ID = os.getenv('ADMIN_TG_ID')
+ADMIN_TG_ID = int(ADMIN_TG_ID)
