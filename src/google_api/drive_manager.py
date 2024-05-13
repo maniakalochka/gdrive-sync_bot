@@ -1,5 +1,6 @@
 from googleapiclient.http import MediaFileUpload
 from bot import bot
+import os
 # from drive import service
 
 
@@ -15,5 +16,7 @@ def upload_file_to_drive(service, tg_file_id, default_name,
     file = service.files().create(body=file_metadata,
                                   media_body=media,
                                   fields='id').execute()
+
+    os.remove(default_name)  # Удаление файла после его загрузки на диск    
     return file.get('id')
 

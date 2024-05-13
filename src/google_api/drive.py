@@ -1,7 +1,6 @@
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
-# from src.bot import CLIENT_SECRETS
 import os
 from dotenv import load_dotenv
 

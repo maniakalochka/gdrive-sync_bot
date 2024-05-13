@@ -4,8 +4,8 @@ from utils.utils import admin_required
 from handlers.process_handlers import *
 
 command_list = [
-    'start', 'help',
-    ''
+    '/start', '/help',
+    '/upload',
 ]
 
 
@@ -30,3 +30,10 @@ def upload_cmd(message):
     chat_id = message.chat.id
     msg = bot.send_message(chat_id, UPLOAD_MSG)
     bot.register_next_step_handler(msg, process_upload_step)
+
+
+@bot.message_handler(func=lambda message: True)
+@admin_required
+def unknown_cmd(message):
+    bot.reply_to(message, UNKNOWN)
+

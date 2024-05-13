@@ -1,3 +1,4 @@
+from ast import ExceptHandler
 from email.policy import default
 from bot import bot
 from commands_text import *
@@ -8,26 +9,41 @@ user_states = {}
 
 STATE_START = 0
 
-@bot.message_handler(content_types=['document'])
+def handle_document(message):
+    return message.document.file_id, message.document.file_name, message.document.file_size
+
+def handle_photo(message):
+    file_info = bot.get_file(message.photo[-1].file_id)
+    file_size = file_info.file_size
+    return message.photo[-1].file_id, 'photo.jpg', file_size
+
+def handle_audio(message):
+    return message.audio.file_id, message.audio.title, message.audio.file_size
+
+def handle_video(message):
+    return message.video.file_id, message.video.file_name, message.video.file_size
+
+handlers = {
+    'document': handle_document,
+    'photo': handle_photo,
+    'audio': handle_audio,
+    'video': handle_video,
+}
+
+@bot.message_handler(content_types=['document', 'photo', 'audio', 'video'])
 def process_upload_step(message):
-    '''Шаг процесса загрузки файла: команда /upload'''
     chat_id = message.chat.id
     if message.text == '/cancel':
         user_states[chat_id] = STATE_START
         bot.send_message(chat_id, CANCEL_MSG)
-    else:
-        while True:
-            chat_id = message.chat.id
-            document = message.document
-            if not document:
-                raise Exception('Это не документ. Повторите попытку:')
+    if message.content_type in handlers:
+        file_id, name, file_size = handlers[message.content_type](message)
+        mimetype, _ = mimetypes.guess_type(name)
+        bot.reply_to(message, UPLOAD_OK)
+        upload_file(file_id, name, mimetype, file_size)
+    else: 
+        bot.reply_to(message, upload_file_to_drive, UPLOAD_WRONG_FORMAT)
             
-            name = document.file_name
-            mimetype, _ = mimetypes.guess_type(name)
-            file_size = document.file_size
-            bot.reply_to(message, UPLOAD_OK)
-            tg_file_id = message.document.file_id
-            default_name = message.document.file_name
 
-            upload_file(tg_file_id, default_name, mimetype, file_size)
-            break
+
+
