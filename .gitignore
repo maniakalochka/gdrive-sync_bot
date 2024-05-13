@@ -1,4 +1,6 @@
 app.db
+src/client-secrets.json
+src/client-secrets.json:Zone.Identifier
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
