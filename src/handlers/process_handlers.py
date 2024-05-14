@@ -1,5 +1,3 @@
-from ast import ExceptHandler
-from email.policy import default
 from bot import bot
 from commands_text import *
 from db.db_manager import *
@@ -42,8 +40,22 @@ def process_upload_step(message):
         bot.reply_to(message, UPLOAD_OK)
         upload_file(file_id, name, mimetype, file_size)
     else: 
-        bot.reply_to(message, upload_file_to_drive, UPLOAD_WRONG_FORMAT)
-            
+        bot.reply_to(message, UPLOAD_WRONG_FORMAT)
+
+       
+def process_show_dirs_and_files_step(message):
+    chat_id = message.chat.id
+    if message.text == '/cancel':
+        user_states[chat_id] = STATE_START
+        bot.send_message(chat_id, CANCEL_MSG)
+    else:
+        
+        res = show_current_dir_elem()
+        res = '\n'.join(res)
+        bot.send_message(chat_id, res)
+
+
+
 
 
 

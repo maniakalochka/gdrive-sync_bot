@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Boolean, Text, DateTime
 # from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 from sqlalchemy.sql import func
 from dotenv import load_dotenv
 import os
@@ -23,29 +23,13 @@ class File(Base):
     
     id = Column(Integer, primary_key=True)  # локальный для БД, создается при отправке на диск
     gdrive_id = Column(String, nullable=False)  # id, который дает диск
-    tg_file_id = Column(String, nullable=False)
     default_name = Column(String, nullable=False) 
     upload_date = Column(DateTime, default=func.now())  
-    file_size = Column(Integer, nullable=False)
-    mime_type = Column(String, nullable=False) 
-    # folder_id = Column(String, ForeignKey('folders.folder_id')) /TODO внести в схему БД
+    file_size = Column(Integer, nullable=True)
+    mime_type = Column(String, nullable=True) 
 
     def __str__(self):
         return f"Имя: {self.default_name}.{self.mime_type}[{self.file_size}]"
-
-# class GDriveFolder(Base):
-#     __tablename__ = 'folders'
-    
-#     folder_id = Column(String, primary_key=True)
-#     name = Column(String, nullable=False)
-#     creation_date = Column(DateTime, default=func.now())
-#     parent_folder_id = Column(String)
-
-
-    # def __str__(self):
-    #     return f"Имя: {self.name}"
-
-
 
 Base.metadata.create_all(engine)
 

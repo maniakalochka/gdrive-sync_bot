@@ -2,6 +2,9 @@ from bot import bot, ADMIN_TG_ID
 from commands_text import *
 from utils.utils import admin_required
 from handlers.process_handlers import *
+from google_api.drive_manager import load_files_from_gdrive
+from google_api.drive import service
+
 
 command_list = [
     '/start', '/help',
@@ -32,8 +35,27 @@ def upload_cmd(message):
     bot.register_next_step_handler(msg, process_upload_step)
 
 
+
+@bot.message_handler(commands=['ls'])
+@admin_required
+def list_files_and_dirs(message):
+    chat_id = message.chat.id
+    msg = bot.send_message(chat_id, LS)
+    bot.register_next_step_handler(msg, process_show_dirs_and_files_step)
+
+@bot.message_handler(commands=['indx'])
+@admin_required
+def indexing_gdrive(message):
+    chat_id = message.chat.id
+    msg = bot.send_message(chat_id, INDX)
+    load_files_from_gdrive(service)
+    bot.send_message(chat_id, INDX_OK)
+
+
+
 @bot.message_handler(func=lambda message: True)
 @admin_required
 def unknown_cmd(message):
     bot.reply_to(message, UNKNOWN)
+
 
